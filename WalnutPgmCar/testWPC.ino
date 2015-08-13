@@ -1,7 +1,7 @@
 /**************************************************************
-  Target MCU: Arduino UNO (ATmega328P)Í
-  Clock type: External as in Arduino UNO
-  Clock speed: 16Mhz as of Arduino UNO 16Mhz 5V version
+  Target MCU: Arduino Pro Mini (ATmega328P)
+  Clock type: External as in Arduino Pro Mini
+  Clock speed: 16Mhz as of Arduino Pro Mini 16Mhz 5V version
   Name    : testWPC.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : Thu Aug 06, 2015
@@ -14,6 +14,15 @@
 *****************************************************************/ 
 
 //------------------------------------------------
+void testGoForward()
+{
+  goForward();
+  delay(1000);
+  stopAll();
+  delay(1000);
+}//testGoBackward
+
+//------------------------------------------------
 void testGoBackward()
 {
   goBackward();
@@ -23,32 +32,68 @@ void testGoBackward()
 }//testGoBackward
 
 //------------------------------------------------
+void testTurnLeft()
+{
+  turnLeft();
+  delay(1000);
+  stopAll();
+  delay(1000);
+}//testTurnLeft
+
+//------------------------------------------------
+void testTurnRight()
+{
+  turnRight();
+  delay(1000);
+  stopAll();
+  delay(1000);
+}//testTurnRight
+
+//------------------------------------------------
+void testTurnClk()
+{
+  turnClk();
+  delay(1000);
+  stopAll();
+  delay(1000);
+}//testTurnClk
+
+//------------------------------------------------
+void testTurnAntClk()
+{
+  turnAntClk();
+  delay(1000);
+  stopAll();
+  delay(1000);
+}//testTurnAntClk
+
+//------------------------------------------------
 void testRightMotorBackward()
 {
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(MR_ONOFF, HIGH);
 
-  digitalWrite(rightRelay, LOW);
+  digitalWrite(MR_FWDREV, LOW);
   delay(1000);
-  digitalWrite(rightRelay, HIGH);
+  digitalWrite(MR_FWDREV, HIGH);
   delay(1000);
-  digitalWrite(rightRelay, LOW);
+  digitalWrite(MR_FWDREV, LOW);
 
-  digitalWrite(rightTR, LOW);
+  digitalWrite(MR_ONOFF, LOW);
   delay(2000);
 }//testRightMotorBackward
 
 //------------------------------------------------
 void testLeftMotorBackward()
 {
-  digitalWrite(leftTR, HIGH);
+  digitalWrite(ML_ONOFF, HIGH);
 
-  digitalWrite(leftRelay, LOW);
+  digitalWrite(ML_FWDREV, LOW);
   delay(1000);
-  digitalWrite(leftRelay, HIGH);
+  digitalWrite(ML_FWDREV, HIGH);
   delay(1000);
-  digitalWrite(leftRelay, LOW);
+  digitalWrite(ML_FWDREV, LOW);
 
-  digitalWrite(leftTR, LOW);
+  digitalWrite(ML_ONOFF, LOW);
   delay(2000);
 }//testLeftMotorBackward
 

@@ -1,7 +1,7 @@
 /**************************************************************
-  Target MCU: Arduino UNO (ATmega328P)Í
-  Clock type: External as in Arduino UNO
-  Clock speed: 16Mhz as of Arduino UNO 16Mhz 5V version
+  Target MCU: Arduino Pro Mini (ATmega328P)
+  Clock type: External as in Arduino Pro Mini
+  Clock speed: 16Mhz as of Arduino Pro Mini 16Mhz 5V version
   Name    : WalnutPgmCar.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : Thu Aug 06, 2015
@@ -43,13 +43,13 @@
 *****************************************************************/ 
 
 //------pin assignments
-#define rightTR 5
-#define leftTR 6
+#define MR_ONOFF 9
+#define ML_ONOFF 8
 
 //if both relays are off the car moves forward 
 //if both relays are on the car moves backward
-#define rightRelay 8 
-#define leftRelay 9 
+#define MR_FWDREV 11
+#define ML_FWDREV 10
 
 //1000 ms is for nearly 180 degree at 4V battery
 #define TurnLeftRightDuration 500 
@@ -70,35 +70,55 @@ unsigned long startTime,loopLapse, loopPrevTime=0;
 void setup()
 {
   Serial.begin(9600);
-  pinMode(rightTR, OUTPUT);
-  pinMode(leftTR, OUTPUT);
+  pinMode(MR_ONOFF, OUTPUT);
+  pinMode(ML_ONOFF, OUTPUT);
   
-  digitalWrite(rightTR, LOW);
-  digitalWrite(leftTR, LOW);
-  //digitalWrite(rightTR, HIGH);
-  //digitalWrite(leftTR, HIGH);
+  digitalWrite(MR_ONOFF, LOW);
+  digitalWrite(ML_ONOFF, LOW);
+  //digitalWrite(MR_ONOFF, HIGH);
+  //digitalWrite(ML_ONOFF, HIGH);
   
   curTime = millis();
   prevTime = curTime;
 
   //forward & backward control to motor  
-  pinMode(rightRelay, OUTPUT);
-  pinMode(leftRelay, OUTPUT);
+  pinMode(MR_FWDREV, OUTPUT);
+  pinMode(ML_FWDREV, OUTPUT);
   
   startTime = millis();
   loopPrevTime = startTime;
   
   setupCBT();
+
+  testGoForward();
+
 }//setup
 
 //--------------------------------------------------
 void loop()
 {
+  //masterTest();
+  
   loopCBT();
   //EEPROMsimpleRead();
   //readEEPROMnPrint();
   //delay(5000);
 }//loop
+
+//------------------------------------------------
+void masterTest()
+{
+  testGoForward();
+  /*
+  testGoForward();
+  testGoBackward();
+  testTurnLeft();
+  testTurnRight();  
+  testTurnClk();
+  testTurnAntClk();
+  */
+  
+}//masterTest
 
 //------------------------------------------------
 void noBlockDelay(unsigned long delayDuration)
@@ -119,29 +139,29 @@ void noBlockDelay(unsigned long delayDuration)
 void goBackward()
 {
   //reverse polarize right & left motors
-  digitalWrite(rightRelay, HIGH);
-  digitalWrite(leftRelay, HIGH);
+  digitalWrite(MR_FWDREV, HIGH);
+  digitalWrite(ML_FWDREV, HIGH);
   delay(50);
-  digitalWrite(leftTR, HIGH);
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(ML_ONOFF, HIGH);
+  digitalWrite(MR_ONOFF, HIGH);
 }//goBackward
 
 //------------------------------------------------
 void goForward()
 {
   //normal polarize right & left motors
-  digitalWrite(rightRelay, LOW);
-  digitalWrite(leftRelay, LOW);
+  digitalWrite(MR_FWDREV, LOW);
+  digitalWrite(ML_FWDREV, LOW);
   delay(50);
-  digitalWrite(leftTR, HIGH);
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(ML_ONOFF, HIGH);
+  digitalWrite(MR_ONOFF, HIGH);
 }//goForward
 
 //------------------------------------------------
 void stopAll()
 {
-  digitalWrite(leftTR, LOW);
-  digitalWrite(rightTR, LOW);
+  digitalWrite(ML_ONOFF, LOW);
+  digitalWrite(MR_ONOFF, LOW);
   delay(50);
 }//stopAll
 
@@ -149,11 +169,11 @@ void stopAll()
 void turnClk()
 {
   //reverse polarize right & normal left motors
-  digitalWrite(rightRelay, HIGH);
-  digitalWrite(leftRelay, LOW);
+  digitalWrite(MR_FWDREV, HIGH);
+  digitalWrite(ML_FWDREV, LOW);
   delay(50);
-  digitalWrite(leftTR, HIGH);
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(ML_ONOFF, HIGH);
+  digitalWrite(MR_ONOFF, HIGH);
   delay(TurnLeftRightDuration);
   //goForward();
 }//turnClk()
@@ -162,11 +182,11 @@ void turnClk()
 void turnAntClk()
 {
   //normal polarize right & reverse left motors
-  digitalWrite(rightRelay, LOW);
-  digitalWrite(leftRelay, HIGH);
+  digitalWrite(MR_FWDREV, LOW);
+  digitalWrite(ML_FWDREV, HIGH);
   delay(50);
-  digitalWrite(leftTR, HIGH);
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(ML_ONOFF, HIGH);
+  digitalWrite(MR_ONOFF, HIGH);
   delay(TurnLeftRightDuration);
   //goForward();
 }//turnAntClk()
@@ -174,8 +194,8 @@ void turnAntClk()
 //------------------------------------------------
 void turnLeft()
 {
-  digitalWrite(leftTR, LOW);
-  digitalWrite(rightTR, HIGH);
+  digitalWrite(ML_ONOFF, LOW);
+  digitalWrite(MR_ONOFF, HIGH);
   delay(TurnLeftRightDuration);
   goForward();
 }//turnLeft()
@@ -183,15 +203,13 @@ void turnLeft()
 //------------------------------------------------
 void turnRight()
 {
-  digitalWrite(leftTR, HIGH);
-  digitalWrite(rightTR, LOW);
+  digitalWrite(ML_ONOFF, HIGH);
+  digitalWrite(MR_ONOFF, LOW);
   delay(TurnLeftRightDuration);
   goForward();
 }//turnRight()
 
-boolean IRtimerStarted=false;
-unsigned long IRtimerLapse=0;
+//------------------------------------------------
+//------------------------------------------------
 
-//------------------------------------------------
-//------------------------------------------------
 

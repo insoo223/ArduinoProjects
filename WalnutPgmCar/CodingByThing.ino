@@ -1,7 +1,7 @@
 /**************************************************************
-  Target MCU: Arduino UNO (ATmega328P)Í
+  Target MCU: Arduino Pro Mini (ATmega328P)
   Clock type: External as in Arduino UNO
-  Clock speed: 16Mhz as of Arduino UNO 16Mhz 5V version
+  Clock speed: 16Mhz as of Arduino Pro Mini 16Mhz 5V version
   Name    : CodingByThing.ino
   Author  : Insoo Kim (insoo@hotmail.com)
   Date    : Thu Aug 06, 2015
@@ -17,12 +17,11 @@
 
 #include <EEPROM.h>
 
-#define inputPin   A5
-#define CMDswitch  10
-#define BEGINpin  11
-#define ENDpin  12
-#define CMDpin  13
-#define programmingPin 4
+#define inputPin   A3
+#define PGM_START_LEDpin  7
+#define PGM_CMD_LEDpin  6
+#define PGM_END_LEDpin  5
+#define modeOPswitch 4
 
 #define EEPROM_UsrCmd_BeginBlock  0
 #define EEPROM_UsrCmd_BeginAdrs   1
@@ -57,11 +56,11 @@ boolean DONE_readCMD=false;
 void setupCBT()
 {
   Serial.begin(9600);
-  pinMode(BEGINpin, OUTPUT);
-  pinMode(ENDpin, OUTPUT);
-  pinMode(CMDpin, OUTPUT);
-  pinMode(CMDswitch, INPUT);
-  pinMode(programmingPin, INPUT);
+  pinMode(PGM_START_LEDpin, OUTPUT);
+  pinMode(PGM_END_LEDpin, OUTPUT);
+  pinMode(PGM_CMD_LEDpin, OUTPUT);
+  pinMode(modeOPswitch, INPUT);
+  pinMode(modeOPswitch, INPUT);
 }//setupCBT
 
 //---------------------------------------------        
@@ -74,9 +73,9 @@ void loopCBT()
     testMaster();
   else
   {
-    operationMode = digitalRead(programmingPin);  
+    operationMode = digitalRead(modeOPswitch);  
     //programming & write to EEPROM mode
-    //the programmingPin swith ON and not yet write program to EEPROM
+    //the modeOPswitch swith ON and not yet write program to EEPROM
     if (operationMode == HIGH) 
     {  
       if (!foundCMD_BEGIN)
@@ -89,7 +88,7 @@ void loopCBT()
         if (!foundCMD_END)
           foundCMD_END = chkCMD_END();
           
-        //if ((!foundCMD_END) && (digitalRead(CMDswitch) == LOW))
+        //if ((!foundCMD_END) && (digitalRead(modeOPswitch) == LOW))
         if (!foundCMD_END)
         {
           chkCMD();
@@ -130,7 +129,7 @@ void testMaster()
   doUsrLoop();
   */
   /*
-  if (digitalRead(CMDswitch) == LOW)
+  if (digitalRead(modeOPswitch) == LOW)
   {
     chkCMD();
   }
@@ -153,7 +152,7 @@ boolean chkCMD_BEGIN()
   {
     Serial.println(cmdADC);
     Serial.println("Found CMD_BEGIN");
-    digitalWrite(BEGINpin, HIGH);
+    digitalWrite(PGM_START_LEDpin, HIGH);
     return true;
   }
   else
@@ -162,7 +161,7 @@ boolean chkCMD_BEGIN()
     Serial.println(cmdADC);
     Serial.println("NOT yet found CMD_BEGIN");
     */
-    digitalWrite(BEGINpin, LOW);
+    digitalWrite(PGM_START_LEDpin, LOW);
     return false;   
   }
 }//chkCMD_BEGIN()
@@ -180,7 +179,7 @@ boolean chkCMD_END()
     Serial.println(cmdADC);
     Serial.println(ADCArray[CMD_END] + marginADC);
     Serial.println("Found CMD_END");
-    digitalWrite(ENDpin, HIGH);
+    digitalWrite(PGM_END_LEDpin, HIGH);
     return true;
   }
   else
@@ -190,7 +189,7 @@ boolean chkCMD_END()
     Serial.println(ADCArray[CMD_END] + marginADC);
     Serial.println("NOT yet found CMD_END");
     */
-    digitalWrite(ENDpin, LOW);
+    digitalWrite(PGM_END_LEDpin, LOW);
     return false;   
   }
   //delay(500);
@@ -212,7 +211,7 @@ void chkCMD()
     cmdIdx = getCmdIdx(cmdADC);
     if (usrCmdIdx < maxUsrCmd)
     {
-      digitalWrite(CMDpin, HIGH);
+      digitalWrite(PGM_CMD_LEDpin, HIGH);
       usrCmdArray[usrCmdIdx] = cmdIdx;
       Serial.println(cmdIdx);
       Serial.println("Found CMD");
@@ -220,18 +219,18 @@ void chkCMD()
       Serial.println(strCMD[cmdIdx]);
       usrCmdIdx++;
       delay(1000);
-      digitalWrite(CMDpin, LOW);
+      digitalWrite(PGM_CMD_LEDpin, LOW);
       delay(500);
     }
 
     if (cmdIdx == CMD_END)
     {
-      digitalWrite(ENDpin, HIGH);
+      digitalWrite(PGM_END_LEDpin, HIGH);
       foundCMD_END = true;
     }
     else
     {
-      digitalWrite(ENDpin, LOW);
+      digitalWrite(PGM_END_LEDpin, LOW);
       foundCMD_END = false;
     }
   }//if (cmdADC < 1000)
@@ -264,9 +263,9 @@ void doUsrLoop()
 {
   int operationMode;
   
-  operationMode = digitalRead(programmingPin);  
+  operationMode = digitalRead(modeOPswitch);  
   //programming & write to EEPROM mode
-  //the programmingPin swith ON and not yet write program to EEPROM
+  //the modeOPswitch swith ON and not yet write program to EEPROM
   if (operationMode == HIGH) 
   {
     if (!DONE_writeCmd2EEPROM)
