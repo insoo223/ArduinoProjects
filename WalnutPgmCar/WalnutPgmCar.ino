@@ -51,6 +51,8 @@
 #define MR_FWDREV 11
 #define ML_FWDREV 10
 
+#define MR_SPEED 13
+
 //1000 ms is for nearly 180 degree at 4V battery
 #define TurnLeftRightDuration 500 
 
@@ -60,11 +62,17 @@
 //test period for debugging purpose
 #define testPeriod 5000 //ms
 
+#define speedCheckInterval 2000 //ms
+
+unsigned long cntOpenSlot=0, cntTirePerimeter=0;
 int prevState=0, curState=0;
 float tirePerimeter, travelDist, travelSpeed, prevSpeed;
 unsigned long lapse, prevTime, curTime; 
 unsigned long startTime,loopLapse, loopPrevTime=0;
 
+const float tireD=6.60;
+const float  pi=3.14;
+#define NUMSLOTS 20
 
 //--------------------------------------------------
 void setup()
@@ -84,22 +92,24 @@ void setup()
   //forward & backward control to motor  
   pinMode(MR_FWDREV, OUTPUT);
   pinMode(ML_FWDREV, OUTPUT);
+
+  pinMode(MR_SPEED, INPUT);
   
   startTime = millis();
   loopPrevTime = startTime;
-  
+  tirePerimeter = tireD * pi; 
   setupCBT();
 
-  testGoForward();
+  //testGoForward();
 
 }//setup
 
 //--------------------------------------------------
 void loop()
 {
-  //masterTest();
+  masterTest();
   
-  loopCBT();
+  //loopCBT();
   //EEPROMsimpleRead();
   //readEEPROMnPrint();
   //delay(5000);
@@ -108,7 +118,9 @@ void loop()
 //------------------------------------------------
 void masterTest()
 {
-  testGoForward();
+  goForward();
+  checkSpeed();
+  //testGoForward();
   /*
   testGoForward();
   testGoBackward();
@@ -117,7 +129,6 @@ void masterTest()
   testTurnClk();
   testTurnAntClk();
   */
-  
 }//masterTest
 
 //------------------------------------------------
@@ -152,7 +163,7 @@ void goForward()
   //normal polarize right & left motors
   digitalWrite(MR_FWDREV, LOW);
   digitalWrite(ML_FWDREV, LOW);
-  delay(50);
+  //delay(50);
   digitalWrite(ML_ONOFF, HIGH);
   digitalWrite(MR_ONOFF, HIGH);
 }//goForward
@@ -209,6 +220,66 @@ void turnRight()
   goForward();
 }//turnRight()
 
+//------------------------------------------------
+void checkSpeed()
+{
+  //proceed time tick
+  curTime = millis();
+
+  //when photoTRrightansistor, that is MR_SPEED, is blocked
+  if ( digitalRead(MR_SPEED) == HIGH)
+  {
+    //digitalWrite(sigLED, HIGH);
+    //Serial.println("Blocked");
+      curState = 1;
+    if (prevState != curState)
+    {
+      prevState = 1;
+    }
+  }//if ( digitalRead(photoTRright) == HIGH)
+  else
+  {
+    //digitalWrite(sigLED,  LOW);
+    //Serial.println("Open");
+    curState = 0;
+    if (prevState != curState)
+    {
+      cntOpenSlot++;
+      prevState = 0;
+      
+      //Serial.print("Passing slots: ");
+      //Serial.println(cntOpenSlot);
+    }//if (prevState != curState)
+  }//else, that is ( digitalRead(photoTRright) == LOW)
+
+  lapse = curTime - prevTime;
+  if (lapse > 2000)
+  {
+    digitalWrite(ML_ONOFF, HIGH);
+    digitalWrite(MR_ONOFF, HIGH);
+  }
+      
+  if (lapse > speedCheckInterval)
+  {
+    travelDist = (float)tirePerimeter * (float)cntOpenSlot / (float)NUMSLOTS;
+    Serial.print("cntOpenSlot: ");
+    Serial.println(cntOpenSlot);
+    Serial.print("travelDist: ");
+    Serial.println(round(travelDist));
+    travelSpeed = travelDist/(speedCheckInterval/1000);
+    //Display speed
+    //disp7seg2digits(travelSpeed, false, false);
+    Serial.print("travelSpeed [cm/s]: ");
+    Serial.println(round(travelSpeed));
+    prevTime = curTime;
+    cntOpenSlot=0;
+    if ((prevSpeed == 0) && (travelSpeed == 0))
+      //dispBlank();
+    prevSpeed = travelSpeed;
+  }//if (lapse > speedCheckInterval)
+}//checkSpeed()  
+
+//------------------------------------------------
 //------------------------------------------------
 //------------------------------------------------
 
