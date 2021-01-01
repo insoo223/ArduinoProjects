@@ -27,7 +27,7 @@ void setup()
   setupL293D(); // L293D.ino
   setupDHT11(); // DHT11.ino
   
-  //setupRT(); //for RT module of 3231
+  //setupRT(); //for RT module of 3231 (Used for SDC PN 23195023)
   //setupDS1307();
   // CALL ONLY ONCE, WHEN SETUP Real-Time Clock. Refer RT_DS1307.ino
   //setTimeDS1307(); 
