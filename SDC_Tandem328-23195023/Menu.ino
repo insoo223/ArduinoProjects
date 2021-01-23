@@ -70,9 +70,12 @@ void menuSystem()
         case 3:
         {
           //loopRT_DS1307();
+          /*
           dispTimeYYYYMMDD_DS1307_4digit7Seg();
           dispTimeHHMM_DS1307_4digit7Seg();
           displayTemp_4digit7seg();
+          */
+          test293D(); 
           menuCnt = 0;
           altCnt = 0;
           break;
