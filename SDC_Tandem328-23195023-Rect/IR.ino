@@ -1,4 +1,4 @@
-FpureRcv//**************************************************************//
+//**************************************************************//
 //  Name    : IR.ino
 //  Author  : Insoo Kim
 //  Create  : Oct 8, 2015 
@@ -372,7 +372,7 @@ void setOneIR_Sensitivity(byte loc, bool SerialDebug, bool disp4digit7seg)
   
   switch (loc)
   {
-    case IR_FRONT:
+    case IR_FRONT_CLIFF:
       strcpy(strDirection, STR_FRNT);
       ref30 = &FIR30;
       ref15 = &FIR15;
@@ -485,7 +485,8 @@ void setIR_RefVal_Turn_Auto(bool SerialDebug, bool disp4digit7seg)
     disp4digit7seg_trippleX(startAdrs, 0, DISP_4digit7seg_ITERATION_NORMAL);
     
   // set IR sensitivity
-  setOneIR_Sensitivity(IR_FRONT, SerialDebug, disp4digit7seg);
+  //setOneIR_Sensitivity(IR_FRONT, SerialDebug, disp4digit7seg);
+  setOneIR_Sensitivity(IR_FRONT_CLIFF, SerialDebug, disp4digit7seg);
   setOneIR_Sensitivity(IR_LEFT, SerialDebug, disp4digit7seg);
   setOneIR_Sensitivity(IR_RIGHT, SerialDebug, disp4digit7seg);
 
@@ -685,9 +686,11 @@ void getPureIRsignal_Single(byte loc, bool DebugSerial, bool Debug4digit7seg)
     case IR_RIGHT:
       RcombinedRcv=analogRead(IR_Rcv_RIGHTpin);
       break;
+    /*
     case IR_FRONT_CLIFF:
       CliffFcombinedRcv=analogRead(IR_Rcv_CLIFF_FRONTpin);
       break;
+    */
   }
 
   //--- Turn OFF IR sensors
@@ -711,9 +714,11 @@ void getPureIRsignal_Single(byte loc, bool DebugSerial, bool Debug4digit7seg)
     case IR_RIGHT:
       RambientRcv=analogRead(IR_Rcv_RIGHTpin);
       break;
+    /*
     case IR_FRONT_CLIFF:
       CliffFambientRcv=analogRead(IR_Rcv_CLIFF_FRONTpin);
       break;
+    */
   }
 
   // Now, we can get the pure signal strengh of our IR LEDs!
@@ -728,8 +733,10 @@ void getPureIRsignal_Single(byte loc, bool DebugSerial, bool Debug4digit7seg)
     case IR_RIGHT:
       RpureRcv=abs(RambientRcv-RcombinedRcv);
       break;
+    /*
     case IR_FRONT_CLIFF:
       CliffFpureRcv=abs(CliffFambientRcv-CliffFcombinedRcv);
+    */
       //if cliff is detected, then make noise "bibibip"
       /*
       if (CliffFpureRcv < IR_FRONT_CLIFF_THRESHOLD) 
@@ -751,9 +758,11 @@ void getPureIRsignal_Single(byte loc, bool DebugSerial, bool Debug4digit7seg)
       case IR_RIGHT:
         Serial.print(RcombinedRcv); Serial.print(", "); Serial.print(RambientRcv); Serial.print(", "); Serial.println(RpureRcv);
         break;
+      /*
       case IR_FRONT_CLIFF:
         Serial.print(CliffFcombinedRcv); Serial.print(", "); Serial.print(CliffFambientRcv); Serial.print(", "); Serial.println(CliffFpureRcv);
         break;
+      */
     }
   }
   
@@ -770,9 +779,11 @@ void getPureIRsignal_Single(byte loc, bool DebugSerial, bool Debug4digit7seg)
       case IR_RIGHT:
         disp4digit7seg_trippleX(3000+RpureRcv, 0, DISP_4digit7seg_ITERATION_NORMAL); 
         break;
+      /*
       case IR_FRONT_CLIFF:
         disp4digit7seg_trippleX(4000+CliffFpureRcv, 0, DISP_4digit7seg_ITERATION_NORMAL); 
         break;
+      */
     }
   }    
 }//getPureIRsignal_Single
