@@ -12,7 +12,7 @@
 //-----------------------------
 void setup() 
 {
-  //Serial.begin(9600);
+//  Serial.begin(9600);
   Serial.begin(115200);
   Serial.println("Serial setup success!");
 
@@ -34,6 +34,7 @@ void setup()
   // CALL ONLY ONCE, WHEN SETUP Real-Time Clock (End)
   
   setupCompass();
+
   
   //turn off motors, LEDs
   control74HC595(0, 0, 0);
