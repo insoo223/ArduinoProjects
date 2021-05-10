@@ -1,20 +1,24 @@
 //**************************************************************//
-//  Name    : SDC_Tandem328.ino                                
+//  Name    : SDC_Tandem328-23195023-Rect.ino                                
 //  Author  : Insoo Kim
 //  Create  : Oct 8, 2015 
-//  Update  : Nov 8, 2020    
+//  Update  : 
+//            Mon Jan 25, 2021: Comments for Rectangular bodied car with Insoo's PCB 
+//            Nov 8, 2020    
 //  Notes   : Self-driving car on a single perforated board with w/ATmega328P in parallel with Arduino Pro Mini
 //          : Based on ver01 in _74HC595_7SegFourDigit_StripWired_OutExp folder
+//  GitHub  : https://github.com/insoo223/ArduinoProjects/tree/master/SDC_Tandem328-23195023-Rect
 //****************************************************************
+//Definitions 
 #include "defs.h"
+//External variables to use global vars in the codes other than "globals.ino"
 #include "externs.h"
 
 //-----------------------------
 void setup() 
 {
-  //Serial.begin(9600);
-  Serial.begin(115200);
-  Serial.println("Serial setup success!");
+  // usually 9600 [bps], but use higher speed if available
+  Serial.begin(115200); 
 
   setGlobalVars(); // globals.ino
 

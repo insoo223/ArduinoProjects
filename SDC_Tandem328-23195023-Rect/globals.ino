@@ -74,11 +74,13 @@ int singleDigitDelay=4;
 
 int playMode = MENU_SYSTEM;
 
+//-------------------------------------------------
 void setGlobalVars()
 {
   // ver 02 single piece of perf board
   
   // Set global pin variables of 74HC595 digital OUTPUT expansion chip
+  // datasheet https://app.box.com/s/dsq44qhq6vf913momrqgjox8nnxopbh0
   latchPin = _74HC595_LATCHpin;
   clockPin = _74HC595_CLOCKpin;
   dataPin = _74HC595_DATApin;
