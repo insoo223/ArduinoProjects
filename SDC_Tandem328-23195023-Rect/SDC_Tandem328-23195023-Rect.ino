@@ -17,8 +17,14 @@
 //-----------------------------
 void setup() 
 {
+<<<<<<< HEAD
   // usually 9600 [bps], but use higher speed if available
   Serial.begin(115200); 
+=======
+//  Serial.begin(9600);
+  Serial.begin(115200);
+  Serial.println("Serial setup success!");
+>>>>>>> b0f6ab539708e93dc7e49c3ee2a0be7ccd745730
 
   setGlobalVars(); // globals.ino
 
@@ -38,6 +44,7 @@ void setup()
   // CALL ONLY ONCE, WHEN SETUP Real-Time Clock (End)
   
   setupCompass();
+
   
   //turn off motors, LEDs
   control74HC595(0, 0, 0);
